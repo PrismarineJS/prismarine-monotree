@@ -13,7 +13,7 @@
   "dependencies": {
     "levenshtein": "^1.0.5",
     "mcdevs-wiki-extractor": "^0.1.0",
-    "minecraft-wiki-extractor": "^0.1.0"
+    "minecraft-wiki-extractor": "^0.1.1"
   },
   "keywords": [
     "minecraft",
