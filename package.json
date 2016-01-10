@@ -1,5 +1,5 @@
 {
-  "name": "node-minecraft-extractor",
+  "name": "minecraft-extractor",
   "version": "0.0.0",
   "description": "Generate minecraft data in an useful format using various extraction modules",
   "main": "index.js",
