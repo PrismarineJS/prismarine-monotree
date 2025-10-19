@@ -1,0 +1,11 @@
+packages:
+  - 'trees/*'
+  - '!trees/prismarine-viewer/**'
+  - '!trees/prismarine-web-client/**'
+  - '!trees/mineflayer-pvp/**'
+  - '!trees/mineflayer-tool/**'
+  - '!trees/prismarine-gameplay/**'
+  - '!trees/prismarine-provider-raw/**'
+  - '!trees/prismarine-packet-dumper/**'
+  - '!trees/minecraft-wiki-extractor/**'
+  - '!trees/node-minecraft-extractor/**'

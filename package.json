@@ -1,12 +1,85 @@
 {
   "name": "prismarine-monotree",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "dependencies": {
+    "prismarine-meta": "PrismarineJS/prismarine-meta"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
-  "dependencies": {
-    "prismarine-meta": "PrismarineJS/prismarine-meta"
-  }
+  "overrides": {
+    "require-self": "file:.",
+    "bedrock-protocol": "workspace:*",
+    "bedrock-provider": "workspace:*",
+    "burger-extractor": "workspace:*",
+    "dazed-sheep": "workspace:*",
+    "diamond-square": "workspace:*",
+    "flying-squid": "workspace:*",
+    "mcdevs-wiki-extractor": "workspace:*",
+    "minecraft-assets": "workspace:*",
+    "minecraft-chunk-dumper": "workspace:*",
+    "minecraft-data": "workspace:*",
+    "minecraft-jar-extractor": "workspace:*",
+    "minecraft-wiki-extractor": "workspace:*",
+    "mineflayer": "workspace:*",
+    "mineflayer-cmd": "workspace:*",
+    "mineflayer-collectblock": "workspace:*",
+    "mineflayer-navigate": "workspace:*",
+    "mineflayer-pathfinder": "workspace:*",
+    "mineflayer-pvp": "workspace:*",
+    "mineflayer-statemachine": "workspace:*",
+    "mineflayer-tool": "workspace:*",
+    "node-minecraft-assets": "workspace:*",
+    "node-minecraft-data": "workspace:*",
+    "node-minecraft-extractor": "workspace:*",
+    "node-minecraft-protocol": "workspace:*",
+    "node-minecraft-protocol-forge": "workspace:*",
+    "node-minecraft-wrap": "workspace:*",
+    "node-mojangson": "workspace:*",
+    "node-vec3": "workspace:*",
+    "node-yggdrasil": "workspace:*",
+    "numerous-alpaca": "workspace:*",
+    "prismarine-auth": "workspace:*",
+    "prismarine-biome": "workspace:*",
+    "prismarine-block": "workspace:*",
+    "prismarine-chat": "workspace:*",
+    "prismarine-chunk": "workspace:*",
+    "prismarine-entity": "workspace:*",
+    "prismarine-gameplay": "workspace:*",
+    "prismarine-item": "workspace:*",
+    "prismarine-nbt": "workspace:*",
+    "prismarine-packet-dumper": "workspace:*",
+    "prismarine-physics": "workspace:*",
+    "prismarine-provider-anvil": "workspace:*",
+    "prismarine-provider-raw": "workspace:*",
+    "prismarine-proxy": "workspace:*",
+    "prismarine-realms": "workspace:*",
+    "prismarine-recipe": "workspace:*",
+    "prismarine-registry": "workspace:*",
+    "prismarine-schematic": "workspace:*",
+    "prismarine-template": "workspace:*",
+    "prismarine-viewer": "workspace:*",
+    "prismarine-web-client": "workspace:*",
+    "prismarine-windows": "workspace:*",
+    "prismarine-world": "workspace:*"
+  },
+  "pnpm": {
+    "link-workspace-packages": true,
+    "save-workspace-protocol": true,
+    "neverBuiltDependencies": [
+      "node-minecraft-protocol"
+    ]
+  },
+  "private": true,
+  "workspaces": [
+    "trees/*",
+    "!trees/prismarine-viewer",
+    "!trees/prismarine-web-client",
+    "!trees/mineflayer-pvp",
+    "!trees/mineflayer-tool",
+    "!trees/prismarine-gameplay",
+    "!trees/prismarine-provider-raw",
+    "!trees/prismarine-packet-dumper",
+    "!trees/minecraft-wiki-extractor",
+    "!trees/node-minecraft-extractor"
+  ]
 }

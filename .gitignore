@@ -140,3 +140,6 @@ vite.config.ts.timestamp-*
 
 bun.lock
 package-lock.json
+
+trees/node-minecraft-data/minecraft-data/
+trees/node-minecraft-data/minecraft-assets/
