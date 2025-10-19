@@ -1,0 +1,38 @@
+{
+  "name": "dazed-sheep",
+  "version": "1.2.1",
+  "description": "A Minecraft Classic server in JavaScript",
+  "main": "index.js",
+  "keywords": [],
+  "author": "mhsjlw",
+  "scripts": {
+    "test": "$(npm bin)/jest --verbose --runInBand"
+  },
+  "contributors": [
+    "rom1504 <romain.rom1@gmail.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "js-logger": "^1.4.1",
+    "md5.js": "^1.3.4",
+    "minecraft-classic-protocol": "^1.3.1",
+    "minecraft-classic-protocol-extension": "^1.0.3",
+    "request": "^2.85.0",
+    "requireindex": "^1.2.0",
+    "vec3": "^0.1.3"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dazed-sheep/dazed-sheep.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dazed-sheep/dazed-sheep/issues"
+  },
+  "homepage": "https://github.com/dazed-sheep/dazed-sheep#readme",
+  "devDependencies": {
+    "jest": "^27.0.4"
+  }
+}
