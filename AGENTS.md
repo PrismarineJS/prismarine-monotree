@@ -5,12 +5,13 @@ You are in a **monorepo** containing PrismarineJS projects, each stored as a Git
 The workspace is usually setup for you ahead of time. If you need to reset it, run `bash ./install.sh`.
 This will create trees if they don't exist, update them with latest upstreams and then use `bun` (for speed)
 to install the deps. We use `--ignore-scripts` as there are some broken scripts in some deps, then manually
-run what scripts needs to be run.
+run what scripts need to be run.
 
 👉 Use node and npm for scripts (not Bun) — several projects assume Node.js compatibility.
+
 👉 Use `bun --ignore-scripts` for handling package deps (add/remove), but make sure to manually run needed post-install scripts (see below) if you get errors post install.
 
-`./install.sh` for reference includes:
+* `./install.sh` for reference includes:
 ```sh
 node scripts/create-trees.js
 node scripts/update-trees.js
@@ -51,6 +52,7 @@ For all other projects, these don't spawn servers so you can run full test suite
 ## Examples
 
 Prompt: "Why are mineflayer tests failing?"
+
 You:
 ```md
 I need to locate the mineflayer repo, then test it.
