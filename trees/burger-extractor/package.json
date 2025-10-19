@@ -1,0 +1,32 @@
+{
+  "name": "burger-extractor",
+  "version": "1.0.0",
+  "description": "A burger extractor",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PrismarineJS/burger-extractor.git"
+  },
+  "scripts": {
+    "fix": "standard --fix"
+  },
+  "keywords": [
+    "burger",
+    "extractor"
+  ],
+  "author": "Romain Beaumont <romain.rom1@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PrismarineJS/burger-extractor/issues"
+  },
+  "homepage": "https://github.com/PrismarineJS/burger-extractor#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^12.2.0",
+    "minecraft-data": "^3.0.0",
+    "parse-wikitext": "^1.0.0"
+  },
+  "devDependencies": {
+    "standard": "^17.0.0"
+  }
+}
