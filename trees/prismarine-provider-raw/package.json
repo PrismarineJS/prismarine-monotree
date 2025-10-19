@@ -1,0 +1,41 @@
+{
+  "name": "prismarine-provider-raw",
+  "version": "1.1.0",
+  "description": "Raw Storage Provider implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose",
+    "pretest": "npm run lint && require-self",
+    "prepare": "npm install require-self && require-self",
+    "lint": "standard",
+    "fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IdanHo/prismarine-provider-raw.git"
+  },
+  "keywords": [
+    "prismarine",
+    "provider",
+    "chunk",
+    "minecraft"
+  ],
+  "author": "Idan Horowitz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IdanHo/prismarine-provider-raw/issues"
+  },
+  "homepage": "https://github.com/IdanHo/prismarine-provider-raw#readme",
+  "devDependencies": {
+    "jest": "^27.0.4",
+    "require-self": "^0.2.3",
+    "rimraf": "^3.0.2",
+    "standard": "^16.0.1",
+    "vec3": "^0.1.6"
+  },
+  "dependencies": {
+    "minecraft-data": "^2.63.0",
+    "prismarine-chunk": "^1.20.3",
+    "smart-buffer": "^4.1.0"
+  }
+}
