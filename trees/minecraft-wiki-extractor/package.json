@@ -1,0 +1,37 @@
+{
+  "name": "minecraft-wiki-extractor",
+  "version": "0.2.1",
+  "description": "Extract structured data from the minecraft wiki",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec",
+    "fix": "standard --fix"
+  },
+  "dependencies": {
+    "async": "^3.2.0",
+    "canvas": "^2.7.0",
+    "fuzzysort": "^1.1.4",
+    "lua.vm.js": "^0.0.1",
+    "minecraft-data": "^2.79.0",
+    "parse-wikitext": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "standard": "^17.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrismarineJS/minecraft-wiki-extractor.git"
+  },
+  "keywords": [
+    "minecraft",
+    "wiki",
+    "extractor"
+  ],
+  "author": "Romain Beaumont <romain.rom1@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PrismarineJS/minecraft-wiki-extractor/issues"
+  },
+  "homepage": "https://github.com/PrismarineJS/minecraft-wiki-extractor#readme"
+}
