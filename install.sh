@@ -1,3 +1,4 @@
+bun install --ignore-workspace
 node scripts/create-trees.js
 node scripts/update-trees.js
 bun install --ignore-scripts
