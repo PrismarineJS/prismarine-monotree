@@ -6,10 +6,15 @@ The workspace is usually setup for you ahead of time. Otherwise, use `pnpm` to i
 Always with `--ignore-scripts` (there are some broken scripts in some deps).
 Otherwise, use npm and node for running scripts for compatibility.
 
+If you need to manually setup the environment, you can run `bash ./install.sh` that includes:
 ```sh
+node scripts/create-trees.js
+node scripts/update-trees.js
 # in root here
-pnpm install --ignore-scripts
+bun install --ignore-scripts
 # manually run some scripts
 npm --prefix trees/node-minecraft-data run prepare
 npm --prefix trees/node-mojangson run prepublish
+# manually fix some package issues
+node scripts/make-links.js
 ```

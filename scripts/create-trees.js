@@ -2,7 +2,7 @@ const fs = require('fs')
 const cp = require('child_process')
 const path = require('path')
 const { projects } = JSON.parse(fs.readFileSync(require.resolve('prismarine-meta/.meta'), 'utf-8'))
-const exec = cmd => { console.log('$', cmd); cp.execSync(cmd, { stdio: 'inherit', cwd: __dirname }) }
+const exec = cmd => { console.log('$', cmd); cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '..') }) }
 
 /*
 Some git installs may not be compiled with subtree. If command not found, install manually:
@@ -52,6 +52,6 @@ for (const name in projects) {
 for (const name in specialCommands) {
   for (const cmd of specialCommands[name]) {
     console.log(name + ': $', cmd)
-    cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, 'trees', name) })
+    cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '../trees', name) })
   }
 }
