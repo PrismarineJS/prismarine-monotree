@@ -1,0 +1,20 @@
+# Dependency directories
+node_modules/
+
+# lock file
+package-lock.json
+
+# minecraft server working directory
+/server
+
+# packet output
+/packets
+
+# downloaded version information
+/versions
+
+# output folder of using dumpPackets
+
+output
+
+temp/
