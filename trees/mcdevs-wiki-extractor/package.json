@@ -1,0 +1,37 @@
+{
+  "name": "mcdevs-wiki-extractor",
+  "version": "0.2.0",
+  "description": "Extract structured data from the mcdevs wiki",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "pandoc-filter": "^1.0.0",
+    "pdc": "^0.2.3",
+    "ramda": "^0.30.1",
+    "parse-wikitext": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^11.0.1",
+    "standard": "^17.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrismarineJS/mcdevs-wiki-extractor.git"
+  },
+  "keywords": [
+    "mcdevs",
+    "wiki",
+    "extractor",
+    "structured",
+    "data"
+  ],
+  "author": "Romain Beaumont <romain.rom1@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PrismarineJS/mcdevs-wiki-extractor/issues"
+  },
+  "homepage": "https://github.com/PrismarineJS/mcdevs-wiki-extractor#readme"
+}
