@@ -1,7 +1,8 @@
 const fs = require('fs')
 const cp = require('child_process')
 const path = require('path')
-const { projects } = JSON.parse(fs.readFileSync(require.resolve('prismarine-meta/.meta'), 'utf-8'))
+// wget https://raw.githubusercontent.com/PrismarineJS/prismarine-meta/refs/heads/master/.meta -O repos.json
+const { projects } = require('./repos.json')
 const exec = cmd => { console.log('$', cmd); cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '..') }) }
 
 /*
