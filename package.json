@@ -1,0 +1,12 @@
+{
+  "name": "prismarine-monotree",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "prismarine-meta": "PrismarineJS/prismarine-meta"
+  }
+}
