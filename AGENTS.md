@@ -7,7 +7,8 @@ This will create trees if they don't exist, update them with latest upstreams an
 to install the deps. We use `--ignore-scripts` as there are some broken scripts in some deps, then manually
 run what scripts needs to be run.
 
-That said, use `npm` and `node` for running scripts for compatibility as Bun does not have full Node.js compat.
+👉 Use node and npm for scripts (not Bun) — several projects assume Node.js compatibility.
+👉 Use `bun --ignore-scripts` for handling package deps (add/remove), but make sure to manually run needed post-install scripts (see below) if you get errors post install.
 
 `./install.sh` for reference includes:
 ```sh
@@ -18,24 +19,32 @@ bun install --ignore-scripts
 # manually run some scripts
 npm --prefix trees/node-minecraft-data run prepare
 npm --prefix trees/node-mojangson run prepublish
-# manually fix some package issues
+# manually fix some package issues wrt self `file:` deps
 node scripts/make-links.js
 ```
 
-## Notes
+## 📜 Project Notes
 
-Most projects are node.js, but not all. Refer to README.md and other markdown files as documentation.
-You can `ls -R | grep .md` inside a tree to search for docs.
+Most projects are Node.js, but not all. Check CI files, README.md or other markdown docs inside a tree:
 
-mineflayer, node-minecraft-protocol and bedrock-protocol both support many projects. As such, running `npm test` will take a very long time since they spawn servers.
-Instead, try running `pretest` and directly invoking mocha. 
+```sh
+ls -R trees/<project> | grep .md
+```
 
-Most projects prefix tests with `<version>v`. So try `npx mocha --exit -g "1.20v"` where `1.20` would be the version you want to test.
+Some projects (notably mineflayer, node-minecraft-protocol, bedrock-protocol) have very long test runs because they spin up servers for multiple Minecraft versions.
 
-For reference, to find the list of supported versions in a project (relevant to find latest version):
-* mineflayer/ lists supported versions in lib/version.js.
-* node-minecraft-protocol/ lists supported versions in src/version.js
-* bedrock-protocol/ in src/options.js
+Instead of `npm test` prefer:
+```sh
+npm run pretest
+npx mocha --exit -g "1.20v"
+```
+
+where 1.20 is the version to target.
+
+To find supported versions:
+* mineflayer/lib/version.js
+* node-minecraft-protocol/src/version.js
+* bedrock-protocol/src/options.js
 
 For all other projects, these don't spawn servers so you can run full test suites without problems.
 
