@@ -1,0 +1,41 @@
+{
+  "name": "minecraft-chunk-dumper",
+  "version": "1.3.0",
+  "description": "Dumps chunks for any minecraft version",
+  "main": "index.js",
+  "bin": {
+    "minecraftChunkDumper": "./bin/cmd.js"
+  },
+  "scripts": {
+    "test": "mocha",
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrismarineJS/minecraft-chunk-dumper.git"
+  },
+  "keywords": [
+    "minecraft",
+    "dumper",
+    "chunk"
+  ],
+  "author": "Romain Beaumont <romain.rom1@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PrismarineJS/minecraft-chunk-dumper/issues"
+  },
+  "homepage": "https://github.com/PrismarineJS/minecraft-chunk-dumper#readme",
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "debug": "^4.0.1",
+    "minecraft-data": "^3.0.0",
+    "minecraft-protocol": "^1.11.0",
+    "minecraft-wrap": "^1.2.3",
+    "minimist": "^1.2.0"
+  }
+}
