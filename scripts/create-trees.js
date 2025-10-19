@@ -33,11 +33,11 @@ const specialCommands = {
 for (const name in projects) {
   const url = projects[name]
   const exists = fs.existsSync('trees/' + name)
+  exec(`git remote add ${name} ${url} || true`)
   if (exists) {
     console.log('Skipping existing tree', name)
     continue
   }
-  exec(`git remote add ${name} ${url} || true`)
   try {
     exec(`git subtree add --prefix=trees/${name} ${url} master`)
   } catch {
