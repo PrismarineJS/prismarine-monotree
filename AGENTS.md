@@ -14,7 +14,7 @@ run what scripts need to be run.
 * `./install.sh` for reference includes:
 ```sh
 node scripts/create-trees.js
-node scripts/update-trees.js
+# node scripts/update-trees.js
 # in root here
 bun install --ignore-scripts
 # manually run some scripts
