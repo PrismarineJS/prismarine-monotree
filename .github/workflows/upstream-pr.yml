@@ -1,0 +1,42 @@
+name: Upstream PR sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to sync to upstream repositories'
+        required: true
+        type: string
+      dry_run:
+        description: 'Do not push or open PRs, only log actions'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ inputs.pr_number }}/head
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Run upstream sync
+        run: |
+          node scripts/create-upstream-prs.js
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PAT_PASSWORD: ${{ secrets.PAT_PASSWORD }}
+
