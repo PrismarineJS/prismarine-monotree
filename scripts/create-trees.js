@@ -1,6 +1,7 @@
 const fs = require('fs')
 const cp = require('child_process')
 const path = require('path')
+const hooks = require('./hooks')
 // wget https://raw.githubusercontent.com/PrismarineJS/prismarine-meta/refs/heads/master/.meta -O repos.json
 const { projects } = require('./repos.json')
 const exec = cmd => { console.log('$', cmd); cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '..') }) }
@@ -16,19 +17,6 @@ sudo install -m 0755 git-subtree "$(git --exec-path)/git-subtree"
 // git subtree add --prefix=trees/repoA git@github.com:you/repoA.git main
 
 exec('git config --global protocol.file.allow always')
-
-const specialCommands = {
-  'node-minecraft-data': [
-    'rm -rf minecraft-data',
-    'ln -s ../minecraft-data minecraft-data',
-    'git update-index --skip-worktree minecraft-data'
-  ],
-  'node-minecraft-assets': [
-    'rm -rf minecraft-assets',
-    'ln -s ../minecraft-assets minecraft-assets',
-    'git update-index --skip-worktree minecraft-assets'
-  ]
-}
 
 for (const name in projects) {
   const url = projects[name]
@@ -50,9 +38,4 @@ for (const name in projects) {
   }
 }
 
-for (const name in specialCommands) {
-  for (const cmd of specialCommands[name]) {
-    console.log(name + ': $', cmd)
-    cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '../trees', name) })
-  }
-}
+hooks.post()
