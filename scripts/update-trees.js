@@ -4,6 +4,7 @@ const path = require('path')
 const exec = cmd => { console.log('$', cmd); cp.execSync(cmd, { stdio: 'inherit', cwd: path.join(__dirname, '..') }) }
 
 exec('git config --global protocol.file.allow always')
+exec('git status')
 
 const files = fs.readdirSync('trees')
 
