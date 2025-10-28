@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 20
 
+      - run: node scripts/create-trees.js
+
       - name: Run update-trees script
         run: node scripts/update-trees.js
 
