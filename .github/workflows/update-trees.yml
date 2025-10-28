@@ -1,0 +1,42 @@
+name: Update Trees
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update-trees:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run update-trees script
+        run: node scripts/update-trees.js
+
+      - name: Commit changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: update trees"
+            echo "changes=true" >> "$GITHUB_ENV"
+          else
+            echo "No changes to commit."
+            echo "changes=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Push changes
+        if: env.changes == 'true'
+        run: git push
