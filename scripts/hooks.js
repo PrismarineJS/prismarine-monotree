@@ -40,3 +40,5 @@ function pre () {
     }
   }
 }
+
+module.exports = { pre, post }
