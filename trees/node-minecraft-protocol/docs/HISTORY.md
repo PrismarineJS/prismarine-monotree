@@ -1,5 +1,12 @@
 # History
 
+## 1.64.0
+* [🎈 1.21.11 (#1457)](https://github.com/PrismarineJS/node-minecraft-protocol/commit/77f4167d93a70322f2963c3c81586c8fe0c6c299) (thanks @rom1504bot)
+
+## 1.63.0
+* [🎈 1.21.9 (#1435)](https://github.com/PrismarineJS/node-minecraft-protocol/commit/0c35d94b9bf173b2127bae0b8d5f1c8789722fad) (thanks @rom1504bot)
+* [fix emitting playerJoin too early (#1424)](https://github.com/PrismarineJS/node-minecraft-protocol/commit/bf89f7e86526c54d8c43f555d8f6dfa4948fd2d9) (thanks @zardoy)
+
 ## 1.62.0
 * [Add support for Minecraft 1.21.8 (#1427)](https://github.com/PrismarineJS/node-minecraft-protocol/commit/8a99613672298b2e9a1e66ca41f8bb720cf1a439) (thanks @rom1504)
 
