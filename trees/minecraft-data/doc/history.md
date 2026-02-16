@@ -1,3 +1,33 @@
+## 3.105.0
+* [🎈 Add Minecraft pc 1.21.11 data (#1144)](https://github.com/PrismarineJS/minecraft-data/commit/52cfa3ed1534226868dd6f1a6c47f16070e939ad) (thanks @rom1504bot)
+
+## 3.104.0
+* [Add bedrock 1.26.0 (26.0, v924) protocol data (#1148)](https://github.com/PrismarineJS/minecraft-data/commit/0d7f0d71b7b032769aab9e236294e2a5dffd58a0) (thanks @extremeheat)
+* [Add 26.1-snapshot-6 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/789670bbf2ae37c87bac50433bba57b106448b4c) (thanks @github-actions[bot])
+* [Add 26.1-snapshot-5 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/7350453dc63ac2a3fbfd4051768e67267ca4639c) (thanks @github-actions[bot])
+
+## 3.103.0
+* [🎈 Add Minecraft pc 1.21.9/1.21.10 data (#1096)](https://github.com/PrismarineJS/minecraft-data/commit/c2609713383da7844bb8ce1e6cb580b767f04a53) (thanks @rom1504bot)
+* [Add 26.1-snapshot-4 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/6dac6d16330ebc9e4326b0d52cb71fcfac9bbb9c) (thanks @github-actions[bot])
+* [Add 26.1-snapshot-3 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/1555cce4730cf7a830630b954d172c6f17e8600e) (thanks @github-actions[bot])
+* [Add 26.1-snapshot-2 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/9443ed0dec3b9b8cdfe82ddb8a8097a622df10a7) (thanks @github-actions[bot])
+
+## 3.102.3
+* [bedrock protocol: use ZigZag64 instead of VarInt64 in packet_player_location (#1081)](https://github.com/PrismarineJS/minecraft-data/commit/803fce17e9cbefdba4013a772698c68a7792bb7f) (thanks @Snowbelldog)
+* [pc: Fix packet_explosion partial packet issue 1.21.4 - 1.21.8 (#1114)](https://github.com/PrismarineJS/minecraft-data/commit/c7048f26a8f60f75f3634817b4507bc49b575fae) (thanks @Rohan2460)
+* [bedrock: Fix 1.21.130 protocol command request origin (#1132)](https://github.com/PrismarineJS/minecraft-data/commit/d8ac281faba737d27bccc627ca0e1bd9b5231315) (thanks @mc-zuri)
+
+## 3.102.2
+* [Revert "bedrock: fix type for packet_command_request.version in 1.21.130 (#1127)" (#1133)](https://github.com/PrismarineJS/minecraft-data/commit/96cb35679d536f2811d765b2f3bbcb7dc2855ac4) (thanks @extremeheat)
+
+## 3.102.1
+* [bedrock: fix type for packet_biome_definition_list in 1.21.111+ (#1129)](https://github.com/PrismarineJS/minecraft-data/commit/aa8c52f8f8e53f6340ad4ee222b50aa2f4ad525f) (thanks @mc-zuri)
+* [bedrock: fix type for packet_command_request.version in 1.21.130 (#1127)](https://github.com/PrismarineJS/minecraft-data/commit/cf5fbc5bf7638a334834e66c8fc3efaf14a56519) (thanks @mc-zuri)
+* [Add 26.1-snapshot-1 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/5d2847d3aefde292ef7e95c90c91a5fb74bcfa4a) (thanks @github-actions[bot])
+
+## 3.102.0
+* [Add Bedrock 1.21.130 protocol data (#1123)](https://github.com/PrismarineJS/minecraft-data/commit/f02ae17f958229ecf73cd42d87e1958d6992ebff) (thanks @extremeheat)
+
 ## 3.101.0
 * [Add bedrock 1.21.124 protocol data (#1110)](https://github.com/PrismarineJS/minecraft-data/commit/e3bc56f073699fbff3d86a5fabeb56a513a54216) (thanks @extremeheat)
 * [Add 1.21.11-pre2 to pc protocolVersions.json](https://github.com/PrismarineJS/minecraft-data/commit/a56aac2cf69c06d3665e039d747bbd19b6f1d109) (thanks @github-actions[bot])
