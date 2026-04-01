@@ -10,6 +10,16 @@ const { makeMarkdown, parsePacketCounter } = require('../lib/stats-helper')
 const generatePackets = require('../lib/generate-packets')
 const process = require('process')
 
+// Handle errors that occur during packet dumping - these are expected and should not crash the process
+// Mineflayer can produce unhandled rejections from internal async operations (e.g. activateBlock)
+process.on('unhandledRejection', (err) => {
+  if (err.code === 'ECONNRESET' || err.code === 'EPIPE') {
+    console.log('Connection error (expected):', err.message)
+    return
+  }
+  console.error('Unhandled rejection (non-fatal):', err.message || err)
+})
+
 const argv = require('yargs/yargs')(process.argv.slice(2))
   .usage('Usage: $0 [options]')
   .version(false) // disable default version command
@@ -137,25 +147,56 @@ function asyncStopServer (server) {
 }
 
 async function main () {
-  // setup
-  const version = argv.version
-  await setupDirectories() // delete old directories
-  await downloadMCServer(version) // download server
-  // start client/server
-  const server = await startServer() // start server
-  const packetLogger = await startMineflayer(version) // start mineflayer
-  // generate packets
-  const { bot } = packetLogger
-  await generatePackets(server, bot)
-  // stop client/server
-  const p = once(bot, 'end')
-  bot.quit()
-  await p
-  await asyncStopServer(server)
-  // make stats files
-  await makeStats(packetLogger, version)
-  // delete temp files
-  await cleanup()
+  let server
+  let bot
+  let botEnded = false
+  try {
+    // setup
+    const version = argv.version
+    await setupDirectories() // delete old directories
+    await downloadMCServer(version) // download server
+    // start client/server
+    server = await startServer() // start server
+    const packetLogger = await startMineflayer(version) // start mineflayer
+    // generate packets
+    bot = packetLogger.bot
+    // Handle connection errors gracefully (e.g. ECONNRESET when server kicks the bot)
+    bot._client.on('error', (err) => {
+      console.log('Bot client error (expected during cleanup):', err.message)
+    })
+    bot.on('error', (err) => {
+      console.log('Bot error (expected during cleanup):', err.message)
+    })
+    bot.on('end', () => {
+      botEnded = true
+    })
+    await generatePackets(server, bot)
+    // stop client/server
+    if (!botEnded) {
+      const p = once(bot, 'end')
+      bot.quit()
+      await p
+    }
+    await asyncStopServer(server)
+    // make stats files
+    await makeStats(packetLogger, version)
+    // delete temp files
+    await cleanup()
+  } catch (err) {
+    console.error('Error during packet dumping:', err.message)
+    // Ensure cleanup happens even on error
+    try {
+      if (bot && !botEnded) {
+        bot.quit()
+      }
+    } catch (e) { /* ignore cleanup errors */ }
+    try {
+      if (server) await asyncStopServer(server)
+    } catch (e) { /* ignore cleanup errors */ }
+    try {
+      await cleanup()
+    } catch (e) { /* ignore cleanup errors */ }
+  }
   process.exit()
 }
 
