@@ -13,16 +13,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 18.x
+    - name: Use Node.js 24.x
       uses: actions/setup-node@v1
       with:
-        node-version: 18.x
+        node-version: 24.x
     - run: npm install
     - run: npm test
     
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     if: github.ref == 'refs/heads/master' #for prs, we use the pr-workflow
     strategy:
       matrix:
@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 18.x
+        node-version: 24.x
     - name: Setup Java JDK
       uses: actions/setup-java@v1.4.3
       with:
@@ -45,8 +45,8 @@ jobs:
         mkdir output
         node bin/dumpPackets -v ${{ matrix.mcVersionIndex }} -o output/${{ matrix.mcVersionIndex }}
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        name: packets
+        name: packets-${{ matrix.mcVersionIndex }}
         path: output
     
