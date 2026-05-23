@@ -1,3 +1,23 @@
+## 3.56.1
+* [feat: accept 0 lengthed encapsulated type as undefined (#734)](https://github.com/PrismarineJS/bedrock-protocol/commit/747dc574a01e33c09c1cd21b81a32ca80e8f95b4) (thanks @hax0r31337)
+
+## 3.56.0
+* [1.26.20 (#732)](https://github.com/PrismarineJS/bedrock-protocol/commit/f6fa11726fa7e3befaf7c02ad12687c9548176ee) (thanks @extremeheat)
+
+## 3.55.1
+* [Pass minecraftVersion to prismarine-realm construction (#723)](https://github.com/PrismarineJS/bedrock-protocol/commit/96aaf4ec8ab14ab8fa0abc3be67a44fa020e5948) (thanks @Copilot)
+* [Update README (#725)](https://github.com/PrismarineJS/bedrock-protocol/commit/7ae370a360542e52d6a31366eacfdc8574738121) (thanks @MikaTech-dev)
+
+## 3.55.0
+* [26.10 support (#710)](https://github.com/PrismarineJS/bedrock-protocol/commit/ee353573bf9076581edc622a0d0462dc0a715d0e) (thanks @extremeheat)
+
+## 3.54.0
+* [Update CI to Node 24 (#708)](https://github.com/PrismarineJS/bedrock-protocol/commit/4bd94b7b00c695297eb0a099fa632c8c22786c51) (thanks @rom1504)
+* [Fix publish workflow for trusted publishing (#707)](https://github.com/PrismarineJS/bedrock-protocol/commit/6690769632d0c13013f6bce424c95e5abaa9ebb1) (thanks @rom1504)
+* [Prepare for 26.10 new token-based auth (#706)](https://github.com/PrismarineJS/bedrock-protocol/commit/53e499173f7a8079cc41c809df369c5002308000) (thanks @extremeheat)
+* [Fix publish condition for npm-publish v4 (#705)](https://github.com/PrismarineJS/bedrock-protocol/commit/48124d4e611bb70501ec91ea6e956c26edc8cdb8) (thanks @rom1504)
+* [Switch to trusted publishing via OIDC (#704)](https://github.com/PrismarineJS/bedrock-protocol/commit/399ab1217d0ed4cd974a31705864f8d18bc8fbcd) (thanks @rom1504)
+
 ## 3.53.0
 * [1.26.0 (#689)](https://github.com/PrismarineJS/bedrock-protocol/commit/8c1939c92b72b1d62c57f3ecafe7e9ed6a6e6094) (thanks @extremeheat)
 
