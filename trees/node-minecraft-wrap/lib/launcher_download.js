@@ -33,11 +33,15 @@ class LauncherDownload {
 
   getVersionsList () {
     if (this.versionsList) { return Promise.resolve(this.versionsList) }
-    return fetch('https://launchermeta.mojang.com/mc/game/version_manifest.json')
-      .then(res => res.json()).then((json) => {
-        this.versionsList = json
-        return json
-      })
+    // The manifest is mutable and carries no validation hash: a persisted
+    // copy can neither be trusted fresh nor be shared safely between
+    // processes, so it must stay in memory.
+    return withRetry('https://launchermeta.mojang.com/mc/game/version_manifest.json', url =>
+      fetchOnce(url, res => res.json())
+    ).then((json) => {
+      this.versionsList = json
+      return json
+    })
   }
 
   getVersionInfos (version) {
@@ -154,6 +158,9 @@ class LauncherDownload {
 
 const pathsPromises = {}
 
+const DOWNLOAD_ATTEMPTS = 3
+const DOWNLOAD_TIMEOUT_MS = 120000
+
 function downloadFile (url, path, size, sha1) {
   assert.notStrictEqual(url, undefined)
   if (pathsPromises[path]) { return pathsPromises[path] }
@@ -164,20 +171,78 @@ function downloadFile (url, path, size, sha1) {
       parts.pop()
       const dirPath = parts.join('/')
       return mkdirp(dirPath)
-        .then(() => {
-          return queue.add(() => new Promise((resolve, reject) => {
-            fetch(url).then(res => {
-              const fileStream = fs.createWriteStream(path)
-              res.body.pipe(fileStream)
-              res.body.on('error', err => reject(err))
-              fileStream.on('finish', () => resolve())
-            })
-          }))
-        })
-        .then(() => checkFile(path, size, sha1))
+        .then(() => downloadWithRetry(url, path, size, sha1))
+    })
+    // A failed download must not poison the cache: without this, every later
+    // call for the same path gets the same rejected promise and can never be
+    // retried in-process.
+    .catch(err => {
+      delete pathsPromises[path]
+      throw err
     })
   pathsPromises[path] = p
   return p
+}
+
+async function downloadWithRetry (url, path, size, sha1) {
+  return withRetry(url, async () => {
+    try {
+      await downloadOnce(url, path)
+      return await checkFile(path, size, sha1)
+    } catch (err) {
+      // a file that failed validation must not survive to satisfy the next
+      // attempt's (or another caller's) existence check
+      await fs.unlink(path).catch(() => {})
+      throw err
+    }
+  })
+}
+
+async function withRetry (url, fn) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn(url)
+    } catch (err) {
+      if (attempt >= DOWNLOAD_ATTEMPTS) throw err
+      debug(`download of ${url} failed (attempt ${attempt}/${DOWNLOAD_ATTEMPTS}): ${err.message ?? err}, retrying`)
+    }
+  }
+}
+
+// The stall timeout covers consume as well as the fetch: a response body
+// that stops flowing must eventually reject, or callers waiting on it hang
+// forever.
+function fetchOnce (url, consume) {
+  return queue.add(async () => {
+    const controller = new AbortController()
+    const timeoutHandle = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS)
+    try {
+      const res = await fetch(url, { signal: controller.signal })
+      if (!res.ok) throw new Error(`download of ${url} failed: HTTP ${res.status}`)
+      return await consume(res)
+    } finally {
+      clearTimeout(timeoutHandle)
+    }
+  })
+}
+
+let tmpCounter = 0
+
+function downloadOnce (url, path) {
+  // Concurrent processes can share these paths, and readers only check
+  // existence: a file at its final path must always be complete, which only
+  // the rename can guarantee.
+  const tmpPath = `${path}.${process.pid}-${tmpCounter++}.tmp`
+  return fetchOnce(url, res => new Promise((resolve, reject) => {
+    const fileStream = fs.createWriteStream(tmpPath)
+    res.body.pipe(fileStream)
+    res.body.on('error', reject)
+    fileStream.on('error', reject)
+    fileStream.on('finish', resolve)
+  })).then(
+    () => fs.rename(tmpPath, path),
+    err => fs.unlink(tmpPath).catch(() => {}).then(() => { throw err })
+  )
 }
 
 function checkFile (path, size, sha1) {

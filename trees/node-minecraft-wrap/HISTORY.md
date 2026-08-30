@@ -1,5 +1,15 @@
 # History
 
+## 1.10.0
+* [Keep the version manifest in memory and make file downloads atomic (#111)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/5ad11963b9cd12db0e2c9e23acd623b18a850f2a) (thanks @u9g)
+
+## 1.9.0
+* [Include lib/ in the npm package (#108)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/ec79612a5ed371e130806a58ad29a6d1b4056b11) (thanks @u9g)
+
+## 1.8.0
+* [Make downloads and server startup settle instead of hanging forever (#106)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/c78281a3bdbb745cd2f041dc88d8702598e6adce) (thanks @u9g)
+* [Add TypeScript type definitions (#105)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/202bbc4a121f65e9c7666e82a8fd2ddcc7f885d8) (thanks @u9g)
+
 ## 1.7.0
 * [Update CI to Node 24 (#101)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/82c80a2a3320251ba6b2e9ad7c0f6d83f08dad88) (thanks @rom1504)
 * [Fix publish condition for npm-publish v4 (#100)](https://github.com/PrismarineJS/node-minecraft-wrap/commit/6abef345d47240020b6a23c8a503ddf20f732413) (thanks @rom1504)
