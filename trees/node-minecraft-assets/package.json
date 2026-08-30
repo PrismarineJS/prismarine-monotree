@@ -1,6 +1,6 @@
 {
   "name": "minecraft-assets",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "description": "Provide minecraft assets",
   "main": "index.js",
   "tonicExampleFilename": "example.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/rom1504/node-minecraft-assets.git"
+    "url": "git+https://github.com/PrismarineJS/node-minecraft-assets.git"
   },
   "keywords": [
     "minecraft",
@@ -21,9 +21,9 @@
   "author": "Romain Beaumont <romain.rom1@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rom1504/node-minecraft-assets/issues"
+    "url": "https://github.com/PrismarineJS/node-minecraft-assets/issues"
   },
-  "homepage": "https://github.com/rom1504/node-minecraft-assets#readme",
+  "homepage": "https://github.com/PrismarineJS/node-minecraft-assets#readme",
   "devDependencies": {
     "require-self": "^0.2.3",
     "standard": "^17.0.0"
