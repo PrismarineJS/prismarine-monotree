@@ -108,9 +108,11 @@ Server event emissions:
 A ServerPlayer instance also emits the following special events:
 * 'join' - the client is ready to recieve game packets after successful server-client handshake/encryption
 * 'close' - emitted when client quit the server
-* 'login' - emitted by client after the client has been authenticated by the server
+* 'login' - emitted after identity and client-data verification. The event value is `{ user, authentication }`, where `authentication` contains `authenticated`, `method` (`oidc`, `legacy`, or `offline`), and the verified issuer. Check `authenticated` rather than inferring trust from an XUID.
 * 'spawn' - emitted after the client lets the server know that it has successfully spawned
 * 'packet' - Emitted for all packets received by client
+
+Offline identities are explicitly marked `authenticated: false`, and their self-asserted XUID is normalized to `0`.
 
 ## Client usage
 
@@ -161,6 +163,38 @@ Order of client event emissions:
 Both Client and ServerPlayer classes have `write(name, params)` and `queue(name, params)` methods. The former sends a packet immediately, and the latter queues them to be sent in the next packet batch. Prefer the latter for better performance and less blocking.
 
 You can use `.close()` to terminate a connection, and `.disconnect(reason)` to gracefully kick a connected client.
+
+### Running commands
+
+Send a `command_request` and correlate the server's `command_output` back to it with `origin.uuid`, which the server echoes:
+
+```js
+const { randomUUID } = require('crypto')
+
+const uuid = randomUUID()
+client.on('command_output', (packet) => {
+  if (packet.origin.uuid === uuid) console.log(packet.output)
+})
+
+client.queue('command_request', {
+  command: '/list',
+  origin: {
+    type: 'player',
+    uuid,
+    request_id: '',
+    player_entity_id: 0n // 1.26.x and above only, see below
+  },
+  internal: false,
+  version: 'latest' // see below
+})
+```
+
+Two fields are version dependent, and getting either wrong on 1.26.x produces a **terminating** `packet_violation_warning` whose reason reads `Command exceeds maximum size of 512 characters.` regardless of the actual cause — it is boilerplate, so don't read it as being about the command length:
+
+* `version` is a varint on 1.21.x and below, and a string from 1.21.130 onwards. On 1.26.x pass the string `'latest'`; numeric-looking values such as `'52'` are rejected.
+* `origin.player_entity_id` is behind a switch on 1.21.x and below (so a `player` origin omits it), but is an unconditional `li64` from 1.21.130 onwards. Omitting it there throws while serializing, before anything is sent.
+
+Note that `command_output.output_type` is a string from 1.21.130 onwards rather than the older enum, and on 1.26.x the complete-output value is spelled `'alloutput'` where the old enum called it `'all'`. Some commands, such as `/say`, produce no `command_output` for the sender at all, so don't await one.
 
 ### Protocol docs
 

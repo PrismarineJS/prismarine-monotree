@@ -1,3 +1,25 @@
+## 3.58.3
+* [Fix authorization and login flow issues with server join process (#779)](https://github.com/PrismarineJS/bedrock-protocol/commit/2fe34f33bd624f3b1b09e34198f53e88628de1ee) (thanks vasilis)
+* [Fix legacy `enum_size_based_on_values_len` type limits (#776)](https://github.com/PrismarineJS/bedrock-protocol/commit/35ff23b66643e964af87a0685a3690cad774ee55) (thanks @AnonymoDGH)
+* [Revert "Add snappy support (#755)" (#775)](https://github.com/PrismarineJS/bedrock-protocol/commit/34b0cb12ef22300aa6c0116f06cb403af888ef19) (thanks @extremeheat)
+* [Add snappy support (#755)](https://github.com/PrismarineJS/bedrock-protocol/commit/b485041b852b25d4cbb3e3b700ff03e95b4a222d) (thanks @FishCMD)
+
+## 3.58.2
+* [Fix modern 1.26.10+ auth and relay compat, add 1.26.44 support (#772)](https://github.com/PrismarineJS/bedrock-protocol/commit/42e63a9fc7e76336cd1daf1a4834ce8217efae77) (thanks @extremeheat)
+* [Update API doc to add section on command_requests (#759)](https://github.com/PrismarineJS/bedrock-protocol/commit/b197d0b7d41fbcd1c26e40cb5733efdb93a95394) (thanks @c-house)
+
+## 3.58.1
+* [Add EOF-tolerant protocol datatypes to prepare for 1.26.40 (#766)](https://github.com/PrismarineJS/bedrock-protocol/commit/32b8e72a299c2aa250af6dc5b7e3455a90ed1b00) (thanks @extremeheat)
+
+## 3.58.0
+* [1.26.40 (#761)](https://github.com/PrismarineJS/bedrock-protocol/commit/d5810977f77b4d0aef4c70e1027542d99e93e1cc) (thanks @extremeheat)
+* [Support 1.26.40 resource_pack_client_response (#760)](https://github.com/PrismarineJS/bedrock-protocol/commit/32b82aa2f12b157c274bb5a0792f9a72b5fa908f) (thanks @hax0r31337)
+* [client: respond to network_stack_latency packets (#750)](https://github.com/PrismarineJS/bedrock-protocol/commit/95ff7a10d9873c214f0df8a7bfb65b89fd55081c) (thanks @VasilisDragon)
+* [Add audience to JWT token (#743)](https://github.com/PrismarineJS/bedrock-protocol/commit/c94bedee951a7c6e3f7bd4b85e0a6a27929c4501) (thanks @Zwuiix-cmd)
+
+## 3.57.0
+* [1.26.30 (#746)](https://github.com/PrismarineJS/bedrock-protocol/commit/d236008ea956f163f0b5c1434ad2d8925d6d3ddc) (thanks @extremeheat)
+
 ## 3.56.1
 * [feat: accept 0 lengthed encapsulated type as undefined (#734)](https://github.com/PrismarineJS/bedrock-protocol/commit/747dc574a01e33c09c1cd21b81a32ca80e8f95b4) (thanks @hax0r31337)
 
