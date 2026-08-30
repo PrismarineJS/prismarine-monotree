@@ -38,6 +38,11 @@ function inject (bot, { hideErrors }) {
   }
   const windowClickQueue = []
   let windowItems
+  // The last window we closed client-side. The server applies our
+  // close_window on a later tick and keeps syncing slots through the old
+  // windowId until then — those trailing packets still describe the player
+  // inventory (routed through the window's inventory region).
+  let lastClosedWindow = null
 
   // 0-8, null = uninitialized
   // which quick bar slot is selected
@@ -247,7 +252,8 @@ function inject (bot, { hideErrors }) {
       target: entity.id,
       mouse: 0, // interact with entity
       sneaking: false,
-      hand: 0 // interact with the main hand
+      hand: 0, // interact with the main hand
+      location: new Vec3(0, 0, 0)
     })
   }
 
@@ -261,7 +267,8 @@ function inject (bot, { hideErrors }) {
       hand: 0, // interact with the main hand
       x: position.x - entity.position.x,
       y: position.y - entity.position.y,
-      z: position.z - entity.position.z
+      z: position.z - entity.position.z,
+      location: position.subtract(entity.position)
     })
   }
 
@@ -410,6 +417,7 @@ function inject (bot, { hideErrors }) {
       windowId: window.id
     })
     copyInventory(window)
+    lastClosedWindow = window
     bot.currentWindow = null
     bot.emit('windowClose', window)
   }
@@ -439,22 +447,23 @@ function inject (bot, { hideErrors }) {
     const trade = window.selectedTrade
     const hasItem = !!window.slots[2]
 
-    if (hasItem !== tradeMatch(trade.inputItem1, window.slots[0])) {
-      if (trade.hasItem2) {
-        return hasItem !== tradeMatch(trade.inputItem2, window.slots[1])
-      }
-      return true
-    }
-    return false
+    // The result slot is present iff every input is satisfied.
+    const satisfied = tradeMatch(trade.inputItem1, window.slots[0]) &&
+      (!trade.hasItem2 || tradeMatch(trade.inputItem2, window.slots[1]))
+    return hasItem !== satisfied
   }
 
   async function waitForWindowUpdate (window, slot) {
+    // The server recomputes the crafting result slot after any click in the
+    // crafting area, including picking up the result (which consumes the
+    // ingredients). Waiting for that resync on result clicks too keeps
+    // follow-up clicks and close_window from racing ahead of the craft.
     if (window.type === 'minecraft:inventory') {
-      if (slot >= 1 && slot <= 4) {
+      if (slot >= 0 && slot <= 4) {
         await once(bot.inventory, 'updateSlot:0')
       }
     } else if (window.type === 'minecraft:crafting') {
-      if (slot >= 1 && slot <= 9) {
+      if (slot >= 0 && slot <= 9) {
         await once(bot.currentWindow, 'updateSlot:0')
       }
     } else if (window.type === 'minecraft:merchant') {
@@ -688,6 +697,9 @@ function inject (bot, { hideErrors }) {
         const item = Item.fromNotch(windowItems.items[i])
         window.updateSlot(i, item)
       }
+      // consume the buffer so a later window reusing this id cannot open
+      // with stale contents
+      windowItems = null
       updateHeldItem()
       extendWindow(window)
       bot.emit('windowOpen', window)
@@ -696,6 +708,7 @@ function inject (bot, { hideErrors }) {
 
   bot._client.on('open_window', (packet) => {
     // open window
+    lastClosedWindow = null
     bot.currentWindow = windows.createWindow(packet.windowId,
       packet.inventoryType, packet.windowTitle, packet.slotCount)
     prepareWindow(bot.currentWindow)
@@ -712,12 +725,25 @@ function inject (bot, { hideErrors }) {
     bot.currentWindow = null
     bot.emit('windowClose', oldWindow)
   })
+  // Window ids restart with the player entity, so a later window can reuse
+  // the closed one's id and its early sync must not be taken for a trailing one.
+  bot._client.on('respawn', () => { lastClosedWindow = null })
   bot._client.on('login', () => {
+    lastClosedWindow = null
     // close window when switch subserver
+    windowItems = null
+    lastClosedWindow = null
     const oldWindow = bot.currentWindow
     if (!oldWindow) return
     bot.currentWindow = null
     bot.emit('windowClose', oldWindow)
+  })
+  // A respawn (death or dimension change) replaces the server-side player
+  // entity and resets its window id counter, so pending window state can
+  // never describe a post-respawn window
+  bot._client.on('respawn', () => {
+    windowItems = null
+    lastClosedWindow = null
   })
   bot._setSlot = (slotId, newItem, window = bot.inventory) => {
     // set slot
@@ -728,15 +754,34 @@ function inject (bot, { hideErrors }) {
   }
   bot._client.on('set_slot', (packet) => {
     const window = packet.windowId === 0 ? bot.inventory : bot.currentWindow
-    if (!window || window.id !== packet.windowId) return
+    if (!window || window.id !== packet.windowId) {
+      // Trailing sync for a window we already closed client-side. Slots in
+      // its player-inventory region still describe bot.inventory — apply
+      // them or the model keeps items the server has since moved.
+      if (lastClosedWindow && packet.windowId === lastClosedWindow.id &&
+        packet.slot >= lastClosedWindow.inventoryStart && packet.slot < lastClosedWindow.inventoryEnd) {
+        const invSlot = packet.slot - (lastClosedWindow.inventoryStart - bot.inventory.inventoryStart)
+        bot._setSlot(invSlot, Item.fromNotch(packet.item))
+      }
+      return
+    }
     const newItem = Item.fromNotch(packet.item)
     bot._setSlot(packet.slot, newItem, window)
   })
+  // set_player_inventory uses vanilla Inventory indices (0-8 hotbar, 9-35 main,
+  // 36-39 armor from feet to head, 40 offhand), not window 0 slot numbers
+  // (36-44 hotbar, 9-35 main, 5-8 armor from head to feet, 45 offhand)
+  function playerInventorySlotToWindow (slotId) {
+    if (slotId <= 8) return slotId + 36 // hotbar
+    if (slotId >= 36 && slotId <= 39) return 44 - slotId // armor
+    if (slotId === 40) return 45 // offhand
+    return slotId // main inventory
+  }
   // 1.21.9+ uses set_player_inventory for server-initiated inventory changes
   // (e.g. console /give) instead of set_slot
   bot._client.on('set_player_inventory', (packet) => {
     const newItem = Item.fromNotch(packet.contents)
-    bot._setSlot(packet.slotId, newItem)
+    bot._setSlot(playerInventorySlotToWindow(packet.slotId), newItem)
   })
   bot.inventory.on('updateSlot', (index) => {
     if (index === bot.quickBarSlot + bot.inventory.hotbarStart) {
@@ -746,7 +791,23 @@ function inject (bot, { hideErrors }) {
   bot._client.on('window_items', (packet) => {
     const window = packet.windowId === 0 ? bot.inventory : bot.currentWindow
     if (!window || window.id !== packet.windowId) {
+      // Buffer even when the id matches a just-closed window: villager
+      // windows send window_items before open_window, and their id can
+      // collide with lastClosedWindow's because a respawn replaces the
+      // server-side player entity and restarts its window id counter.
       windowItems = packet
+      // Trailing sync for a window we already closed client-side — apply
+      // its player-inventory region (see the set_slot handler). The item
+      // count identifies the window shape: an early sync for a different
+      // window type must not be routed through the closed window's slot
+      // mapping.
+      if (lastClosedWindow && packet.windowId === lastClosedWindow.id &&
+        packet.items.length === lastClosedWindow.slots.length) {
+        for (let i = lastClosedWindow.inventoryStart; i < lastClosedWindow.inventoryEnd && i < packet.items.length; i++) {
+          const invSlot = i - (lastClosedWindow.inventoryStart - bot.inventory.inventoryStart)
+          bot._setSlot(invSlot, Item.fromNotch(packet.items[i]))
+        }
+      }
       return
     }
 
@@ -755,9 +816,29 @@ function inject (bot, { hideErrors }) {
       const item = Item.fromNotch(packet.items[i])
       window.updateSlot(i, item)
     }
+    if (packet.carriedItem !== undefined) window.selectedItem = Item.fromNotch(packet.carriedItem)
     updateHeldItem()
     bot.emit(`setWindowItems:${window.id}`)
   })
+
+  // 1.17.1+ servers only answer a click when their record of the client is
+  // stale, so a click they ignored is never reported. A no-op click carrying
+  // an impossible stateId always gets the full window state back.
+  async function syncWindow (window) {
+    if (!bot.supportFeature('stateIdUsed')) return
+    const synced = once(bot, `setWindowItems:${window.id}`)
+    bot._client.write('window_click', {
+      windowId: window.id,
+      stateId: -1,
+      slot: -999,
+      mouseButton: 2, // end of a drag that never started
+      mode: 5,
+      changedSlots: [],
+      cursorItem: Item.toNotch(window.selectedItem)
+    })
+    await synced
+  }
+  bot._syncWindow = syncWindow
 
   /**
    * Convert a vector direction to minecraft packet number direction

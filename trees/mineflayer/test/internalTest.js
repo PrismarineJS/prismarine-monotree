@@ -6,7 +6,8 @@ const mc = require('minecraft-protocol')
 const assert = require('assert')
 const { sleep } = require('../lib/promise_utils')
 const nbt = require('prismarine-nbt')
-const { once } = require('../lib/promise_utils')
+const { once, onceWithCleanup } = require('../lib/promise_utils')
+const { EventEmitter } = require('events')
 const { getPort } = require('./common/util')
 
 for (const supportedVersion of mineflayer.testedVersions) {
@@ -1235,6 +1236,86 @@ for (const supportedVersion of mineflayer.testedVersions) {
       })
     })
 
+    describe('windows', () => {
+      const Item = require('prismarine-item')(supportedVersion)
+      const pWindows = require('prismarine-windows')(supportedVersion)
+      // legacy 'minecraft:chest' has a dynamic size resolved from the packet's
+      // slotCount (container slots only); the modern equivalent is fixed
+      const chestData = pWindows.windows['minecraft:generic_9x3'] ?? { type: 'minecraft:chest', slots: 63 }
+      const merchantData = pWindows.windows['minecraft:merchant'] ?? pWindows.windows['minecraft:villager']
+      const emptyItems = (n) => Array.from({ length: n }, () => Item.toNotch(null))
+      const openWindowPacket = (windowId, winData) => ({
+        windowId,
+        inventoryType: winData.type,
+        windowTitle: chatText(''),
+        slotCount: winData.slots - 36,
+        entityId: 0
+      })
+      const windowItemsPacket = (windowId, items) => ({
+        windowId,
+        stateId: 1,
+        items,
+        carriedItem: Item.toNotch(null)
+      })
+
+      it('opens a window whose early window_items reuses the id of a closed window', (done) => {
+        const emeraldId = registry.itemsByName.emerald.id
+
+        server.on('playerJoin', (client) => {
+          client.write('login', bot.test.generateLoginPacket())
+
+          bot.once('windowOpen', () => {
+            bot.closeWindow(bot.currentWindow)
+          })
+          client.on('close_window', () => {
+            bot.once('windowOpen', (window) => {
+              assert.strictEqual(window.type, merchantData.key)
+              assert.strictEqual(window.slots[0]?.type, emeraldId)
+              done()
+            })
+            // a villager window sends its contents before open_window, and
+            // reuses the chest's id when a respawn reset the server's window
+            // id counter in between
+            const items = emptyItems(merchantData.slots)
+            items[0] = Item.toNotch(new Item(emeraldId, 3))
+            client.write('window_items', windowItemsPacket(1, items))
+            client.write('open_window', openWindowPacket(1, merchantData))
+          })
+
+          client.write('open_window', openWindowPacket(1, chestData))
+          client.write('window_items', windowItemsPacket(1, emptyItems(chestData.slots)))
+        })
+      })
+
+      it('applies the player-inventory region of a trailing sync for a closed window', (done) => {
+        const stoneId = registry.itemsByName.stone.id
+        // chest slot 30 is in the window's player-inventory region and maps
+        // back to inventory slot 12
+        const chestSlot = 30
+        const invSlot = 12
+
+        server.on('playerJoin', (client) => {
+          client.write('login', bot.test.generateLoginPacket())
+
+          bot.once('windowOpen', () => {
+            bot.closeWindow(bot.currentWindow)
+          })
+          client.on('close_window', () => {
+            bot.inventory.once(`updateSlot:${invSlot}`, (oldItem, newItem) => {
+              assert.strictEqual(newItem?.type, stoneId)
+              done()
+            })
+            const items = emptyItems(chestData.slots)
+            items[chestSlot] = Item.toNotch(new Item(stoneId, 5))
+            client.write('window_items', windowItemsPacket(1, items))
+          })
+
+          client.write('open_window', openWindowPacket(1, chestData))
+          client.write('window_items', windowItemsPacket(1, emptyItems(chestData.slots)))
+        })
+      })
+    })
+
     describe('tablist', () => {
       it('handles newlines in header and footer', (done) => {
         const HEADER = 'asd\ndsa'
@@ -1310,6 +1391,32 @@ for (const supportedVersion of mineflayer.testedVersions) {
           bot.entity.pitch = testPitch
           bot.activateItem()
         })
+      })
+    })
+
+    describe('onceWithCleanup', () => {
+      it('rejects instead of throwing out of emit when checkCondition throws', async () => {
+        // A condition that throws used to unwind whatever was emitting. For a
+        // client event that is the socket read path, which then stops delivering
+        // packets entirely and the bot dies on the next keepalive.
+        const emitter = new EventEmitter()
+        const boom = new Error('condition blew up')
+        const promise = onceWithCleanup(emitter, 'thing', {
+          checkCondition: () => { throw boom }
+        })
+        assert.doesNotThrow(() => emitter.emit('thing'))
+        await assert.rejects(promise, err => err === boom)
+        assert.strictEqual(emitter.listenerCount('thing'), 0)
+      })
+
+      it('rejects and removes the listener when the signal is aborted', async () => {
+        const emitter = new EventEmitter()
+        const abort = new AbortController()
+        const reason = new Error('no longer interested')
+        const promise = onceWithCleanup(emitter, 'thing', { signal: abort.signal })
+        abort.abort(reason)
+        await assert.rejects(promise, err => err === reason)
+        assert.strictEqual(emitter.listenerCount('thing'), 0)
       })
     })
   })

@@ -230,6 +230,10 @@ function inject (bot) {
     const entity = entityData?.type === 'player'
       ? addNewPlayer(packet.entityId, packet.objectUUID, packet)
       : addNewNonPlayer(packet.entityId, packet.objectUUID, packet.type, packet)
+    // 1.8 omits velocity when objectData is 0
+    if (packet.velocity) {
+      entity.velocity.update(conv.fromNotchVelocity(new Vec3(packet.velocity.x, packet.velocity.y, packet.velocity.z)))
+    }
     bot.emit('entitySpawn', entity)
   })
 
@@ -900,20 +904,26 @@ function inject (bot) {
 
   function useEntity (target, leftClick, x, y, z) {
     const sneaking = bot.getControlState('sneak')
-    if (x && y && z) {
+    if (leftClick && bot.supportFeature('attackUsesOwnPacket')) {
+      bot._client.write('attack', {
+        entityId: target.id
+      })
+    } else if (x && y && z) {
       bot._client.write('use_entity', {
         target: target.id,
         mouse: leftClick,
         x,
         y,
         z,
-        sneaking
+        sneaking,
+        location: new Vec3(x, y, z)
       })
     } else {
       bot._client.write('use_entity', {
         target: target.id,
         mouse: leftClick,
-        sneaking
+        sneaking,
+        location: new Vec3(0, 0, 0)
       })
     }
   }
