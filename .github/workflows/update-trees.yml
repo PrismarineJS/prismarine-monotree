@@ -9,12 +9,14 @@ jobs:
 
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,16 +32,13 @@ jobs:
       - name: Run update-trees script
         run: node scripts/update-trees.js
 
-      - name: Commit changes
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add -A
-            git commit -m "chore: update trees"
-            echo "changes=true" >> "$GITHUB_ENV"
-          else
-            echo "No changes to commit."
-            echo "changes=false" >> "$GITHUB_ENV"
-          fi
-
-      - name: Push changes
-        run: git push
+      - name: Open a pull request for tree updates
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automation/update-trees
+          base: ${{ github.event.repository.default_branch }}
+          title: 'chore: update trees'
+          commit-message: 'chore: update trees'
+          body: |
+            Automated subtree updates. Review and merge through a pull request.
+            If GitHub requests workflow approval, approve the CI runs before merging.
